@@ -12,8 +12,17 @@ describe 'master' do
     Airborne.configuration.verify_ssl = false
   end
 
-  it 'should return the correct structure' do
+  it 'should return the correct pool list response structure' do
+    get '/api/pools'
+    expect_status( 200 )
+
+    expect_json_types('*', id: :string, url: :string, name: :string, description: :string)
+    puts body
+  end
+
+  it 'should return the correct search response structure' do
      post '/api/search', { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 1 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
+     expect_status( 200 )
 
      expect_json_types( request: :object)
      expect_json_types( pools: :array_of_objects)
