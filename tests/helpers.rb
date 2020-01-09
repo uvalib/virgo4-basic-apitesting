@@ -24,17 +24,17 @@ class Helpers
 
   def self.pool_results_all_values( pool_results, field_name )
 
-    all_titles = []
+    all_values = []
 
     pool_results[:group_list].each do | group |
        group[:record_list].each do | record |
          record[:fields].each do | field |
-           if field[:name] == field_name then all_titles << field[:value] end
+           if field[:name] == field_name then all_values << field[:value] end
          end
        end
     end
 
-    all_titles
+    all_values
   end
 
 end

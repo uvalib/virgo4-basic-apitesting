@@ -106,7 +106,7 @@ describe 'pool' do
   #
 
   #
-  # test that a multi-word title search returns items matching said title
+  # test that a multi-word known title search returns an item with that known title first
   #
   it 'should return exact title match' do
     post search_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
@@ -126,9 +126,7 @@ describe 'pool' do
     all_titles = Helpers.pool_results_all_titles( json_body )
     #puts all_titles
 
-    all_titles.each do | title |
-      expect(title).to eq(first_title)
-    end
+    expect(all_titles[0]).to eq(first_title)
 
   end
 
@@ -153,9 +151,7 @@ describe 'pool' do
     all_subjects = Helpers.pool_results_all_subjects( json_body )
     #puts all_subjects
 
-    all_subjects.each do | subject |
-      expect(subject).to eq(first_subject)
-    end
+    expect(all_subjects).to include(first_subject)
 
   end
 
