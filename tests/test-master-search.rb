@@ -7,6 +7,7 @@ require 'airborne'
 describe 'master' do
 
   # define the endpoints
+  version_endpoint = '/version'
   search_endpoint = '/api/search'
   pools_endpoint = '/api/pools'
 
@@ -16,12 +17,17 @@ describe 'master' do
     Airborne.configuration.verify_ssl = false
   end
 
-  it 'should return the correct pool list response structure' do
+  #
+  # tests that the pools endpoint returns json that includes some pools
+  #
+  it 'pools should return json containing pools' do
     get pools_endpoint
     expect_status( 200 )
-
+    expect(headers[:content_type]).to eq('application/json; charset=utf-8')
+    expect_json_types(:array)
+    expect json_body.count == 8
     expect_json_types('*', id: :string, url: :string, name: :string, description: :string)
-    #puts body
+    
   end
 
   it 'should return the correct search response structure' do
