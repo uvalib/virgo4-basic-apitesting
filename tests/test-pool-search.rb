@@ -17,44 +17,35 @@ describe 'pool' do
   url_list = [ catalog_url, jmrl_url, article_url ]
 
   before do
-    #Airborne.configuration.base_url = article_url
+    Airborne.configuration.base_url = ENV['URL']
     Airborne.configuration.headers = { 'Content-Type' => 'application/json', 'Accept' => 'application/json', 'Authorization' => 'Bearer bkb4notbo1bc80d2uucg' }
     Airborne.configuration.verify_ssl = false
   end
-
   #
   # tests that the search call returns reported JSON
   #
-  it 'search should return json' do
-    url_list.each do |url|
-      Airborne.configuration.base_url = url
+  it "#{ENV['URL']} search should return json" do
       post search_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 1 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
       expect(headers[:content_type]).to eq('application/json; charset=utf-8')
 
-    end
   end
 
   #
   # tests that the facet call returns reported JSON
   #
-  it 'search should return json' do
-    url_list.each do |url|
-      Airborne.configuration.base_url = url
+  it "#{ENV['URL']} search should return json" do
       post facet_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 1 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
       expect(headers[:content_type]).to eq('application/json; charset=utf-8')
-    end
   end
 
   #
   # tests that we have a reasonable structure in response to a search request
   #
-  it 'should return the correct search response structure' do
-    url_list.each do |url|
-      Airborne.configuration.base_url = url
+  it "#{ENV['URL']} should return the correct search response structure" do
       post search_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 1 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
@@ -67,15 +58,12 @@ describe 'pool' do
       #puts json_body
       #puts body
       #puts headers
-    end
   end
 
   #
   # tests that we have a reasonable structure in response to a facet request
   #
-  it 'should return the correct facet response structure' do
-    url_list.each do |url|
-      Airborne.configuration.base_url = url
+  it "#{ENV['URL']} should return the correct facet response structure" do
       post facet_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 1 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
@@ -88,33 +76,26 @@ describe 'pool' do
       #puts json_body
       #puts body
       #puts headers
-    end
   end
 
   #
   # test that a search returns at least 1 item
   #
-  it 'should return one or more items' do
-    url_list.each do |url|
-      Airborne.configuration.base_url = url
+  it "#{ENV['URL']} should return one or more items" do
       post search_endpoint, { :query => "author:{*}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
       expect( json_body[:group_list].count ).to be > 0
-    end
   end
 
   #
   # test that a facet search returns at least 1 facet
   #
-  it 'should return one or more facets' do
-    url_list.each do |url|
-      Airborne.configuration.base_url = url
+  it "#{ENV['URL']} should return one or more facets" do
       post facet_endpoint, { :query => "author:{*}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
       expect( json_body[:facet_list].count ).to be > 0
-    end
   end
 
   #
@@ -132,9 +113,7 @@ describe 'pool' do
   #
   # test that a multi-word known title search returns an item with that known title first
   #
-  it 'should return exact title match' do
-    url_list.each do |url|
-      Airborne.configuration.base_url = url
+  it "#{ENV['URL']} should return exact title match" do
       post search_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
@@ -153,15 +132,12 @@ describe 'pool' do
       #puts all_titles
 
       expect(all_titles[0]).to eq(first_title)
-    end
   end
 
   #
   # test that a subject search returns items with the identical subject
   #
-  it 'should return exact subject match' do
-    url_list.each do |url|
-      Airborne.configuration.base_url = url
+  it "#{ENV['URL']} should return exact subject match" do
       post search_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
@@ -180,7 +156,6 @@ describe 'pool' do
       #puts all_subjects
 
       expect(all_subjects).to include(first_subject)
-    end
   end
 
   #
@@ -195,6 +170,31 @@ describe 'pool' do
   # test that a date range includes an expected item
   #
   #
+  #
+  # test an identifier search
+  #
+=begin
+  it "#{ENV['URL']} should return exact identifier match" do
+      post search_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
+      expect_status( 200 )
+
+      expect( json_body[:group_list].count ).to be > 0
+      puts json_body[:group_list].count
+      # extract the first identifier from the results
+      first_identifier = Helpers.pool_results_first_identifier( json_body )
+      puts first_identifier
+
+      # search for one item with this identifier
+      post search_endpoint, { :query => "id:{\"#{first_identifier}\"}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
+      expect_status( 200 )
+
+      expect( json_body[:group_list].count ).to be > 0
+      all_identifiers = Helpers.pool_results_all_identifiers( json_body )
+      puts all_identifiers
+
+      expect(all_identifiers).to include(first_identifier)
+  end
+=end
 
 end
 
