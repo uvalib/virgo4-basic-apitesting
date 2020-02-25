@@ -11,20 +11,17 @@ describe 'pool' do
   search_endpoint = '/api/search'
   facet_endpoint = '/api/search/facets'
 
-  catalog_url = 'https://pool-solr-ws-catalog-dev.internal.lib.virginia.edu'
-  jmrl_url = 'https://pool-jmrl-ws.internal.lib.virginia.edu'
-  article_url= 'https://pool-eds-ws.internal.lib.virginia.edu'
-  url_list = [ catalog_url, jmrl_url, article_url ]
+  url = ENV['URL']
 
   before do
-    Airborne.configuration.base_url = ENV['URL']
+    Airborne.configuration.base_url = url
     Airborne.configuration.headers = { 'Content-Type' => 'application/json', 'Accept' => 'application/json', 'Authorization' => 'Bearer bkb4notbo1bc80d2uucg' }
     Airborne.configuration.verify_ssl = false
   end
   #
   # tests that the search call returns reported JSON
   #
-  it "#{ENV['URL']} search should return json" do
+  it "#{url} search should return json" do
       post search_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 1 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
@@ -35,7 +32,7 @@ describe 'pool' do
   #
   # tests that the facet call returns reported JSON
   #
-  it "#{ENV['URL']} search should return json" do
+  it "#{url} search should return json" do
       post facet_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 1 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
@@ -45,7 +42,7 @@ describe 'pool' do
   #
   # tests that we have a reasonable structure in response to a search request
   #
-  it "#{ENV['URL']} should return the correct search response structure" do
+  it "#{url} should return the correct search response structure" do
       post search_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 1 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
@@ -63,7 +60,7 @@ describe 'pool' do
   #
   # tests that we have a reasonable structure in response to a facet request
   #
-  it "#{ENV['URL']} should return the correct facet response structure" do
+  it "#{url} should return the correct facet response structure" do
       post facet_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 1 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
@@ -81,7 +78,7 @@ describe 'pool' do
   #
   # test that a search returns at least 1 item
   #
-  it "#{ENV['URL']} should return one or more items" do
+  it "#{url} should return one or more items" do
       post search_endpoint, { :query => "author:{*}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
@@ -91,7 +88,7 @@ describe 'pool' do
   #
   # test that a facet search returns at least 1 facet
   #
-  it "#{ENV['URL']} should return one or more facets" do
+  it "#{url} should return one or more facets" do
       post facet_endpoint, { :query => "author:{*}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
@@ -113,7 +110,7 @@ describe 'pool' do
   #
   # test that a multi-word known title search returns an item with that known title first
   #
-  it "#{ENV['URL']} should return exact title match" do
+  it "#{url} should return exact title match" do
       post search_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
@@ -137,7 +134,7 @@ describe 'pool' do
   #
   # test that a subject search returns items with the identical subject
   #
-  it "#{ENV['URL']} should return exact subject match" do
+  it "#{url} should return exact subject match" do
       post search_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
@@ -173,28 +170,6 @@ describe 'pool' do
   #
   # test an identifier search
   #
-=begin
-  it "#{ENV['URL']} should return exact identifier match" do
-      post search_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
-      expect_status( 200 )
-
-      expect( json_body[:group_list].count ).to be > 0
-      puts json_body[:group_list].count
-      # extract the first identifier from the results
-      first_identifier = Helpers.pool_results_first_identifier( json_body )
-      puts first_identifier
-
-      # search for one item with this identifier
-      post search_endpoint, { :query => "id:{\"#{first_identifier}\"}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
-      expect_status( 200 )
-
-      expect( json_body[:group_list].count ).to be > 0
-      all_identifiers = Helpers.pool_results_all_identifiers( json_body )
-      puts all_identifiers
-
-      expect(all_identifiers).to include(first_identifier)
-  end
-=end
 
 end
 

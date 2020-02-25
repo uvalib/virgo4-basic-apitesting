@@ -1,29 +1,18 @@
 .PHONY: test
-all: test-catalog test-jmrl test-article
+all: test-pools test-master test-client
+test-pools: test-pool-catalog test-pool-jmrl test-pool-articles
 
-test-catalog:
-	URL='https://pool-solr-ws-catalog.internal.lib.virginia.edu' rspec tests/test-*.rb
-
-test-jmrl:
-	URL='https://pool-jmrl-ws.internal.lib.virginia.edu' rspec tests/test-*.rb
-
-test-article:
-	URL='https://pool-eds-ws.internal.lib.virginia.edu' rspec tests/test-*.rb
-
-pool-catalog:
+test-pool-catalog:
 	URL='https://pool-jmrl-ws.internal.lib.virginia.edu' rspec tests/test-pool-*.rb
 
-pool-jmrl:
-    URL='https://pool-jmrl-ws.internal.lib.virginia.edu' rspec tests/test-pool-*.rb
+test-pool-jmrl:
+	URL='https://pool-jmrl-ws.internal.lib.virginia.edu' rspec tests/test-pool-*.rb
 
-pool-article:
+test-pool-articles:
 	URL='https://pool-eds-ws.internal.lib.virginia.edu' rspec tests/test-pool-*.rb
 
-master-catalog:
-	URL='https://pool-jmrl-ws.internal.lib.virginia.edu' rspec tests/test-master-*.rb
+test-master:
+	rspec tests/test-master-*.rb
 
-master-jmrl:
-    URL='https://pool-jmrl-ws.internal.lib.virginia.edu' rspec tests/test-master-*.rb
-
-master-article:
-	URL='https://pool-eds-ws.internal.lib.virginia.edu' rspec tests/test-master-*.rb
+test-client:
+	rspec tests/test-search-client.rb
