@@ -3,7 +3,7 @@ all: test-pools test-master test-client
 test-pools: test-pool-catalog test-pool-jmrl test-pool-articles
 
 test-pool-catalog:
-	URL='https://pool-solr-ws-serials.internal.lib.virginia.edu' rspec tests/test-pool-*.rb
+	URL='https://pool-solr-ws-catalog.internal.lib.virginia.edu' rspec tests/test-pool-*.rb
 
 test-pool-jmrl:
 	URL='https://pool-jmrl-ws.internal.lib.virginia.edu' rspec tests/test-pool-*.rb
