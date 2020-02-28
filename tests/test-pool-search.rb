@@ -171,6 +171,24 @@ describe 'pool' do
   # test an identifier search
   #
 
+  it "#{url} should return exact identifier match" do
+    post search_endpoint, { :query => "keyword:{}", :pagination => { :start => 0, :rows => 1 }  }
+    expect_status( 200 )
+
+    expect( json_body[:group_list].count ).to be > 0
+
+    # extract the first identifier from the results
+    first_identifier = Helpers.pool_results_first_identifier( json_body )
+
+    # search for one item with this identifier
+    post search_endpoint, { :query => "identifier:{#{first_identifier}}", :pagination => { :start => 0, :rows => 1 } }
+    expect_status( 200 )
+
+    expect( json_body[:group_list].count ).to be > 0
+    all_identifiers = Helpers.pool_results_first_identifier( json_body )
+
+    expect(all_identifiers).to include(first_identifier)
+  end
 end
 
 #

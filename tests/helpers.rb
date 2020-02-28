@@ -14,12 +14,21 @@ class Helpers
     return subjects[0]
   end
 
+  def self.pool_results_first_identifier( pool_results )
+    identifiers = self.pool_results_all_identifiers( pool_results )
+    return identifiers[0]
+  end
+
   def self.pool_results_all_titles( pool_results )
     self.pool_results_all_values( pool_results, 'title' )
   end
 
   def self.pool_results_all_subjects( pool_results )
     self.pool_results_all_values( pool_results, 'subject' )
+  end
+
+  def self.pool_results_all_identifiers(pool_results)
+    self.pool_results_all_values( pool_results, 'id' )
   end
 
   def self.pool_results_all_values( pool_results, field_name )
