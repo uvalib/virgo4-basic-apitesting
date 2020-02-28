@@ -128,7 +128,7 @@ describe 'pool' do
       all_titles = Helpers.pool_results_all_titles( json_body )
       #puts all_titles
 
-      expect(all_titles[0]).to eq(first_title)
+      expect(all_titles).to include(first_title)
   end
 
   #
