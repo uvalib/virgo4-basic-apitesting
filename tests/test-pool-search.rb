@@ -144,15 +144,17 @@ describe 'pool' do
       first_subject = Helpers.pool_results_first_subject( json_body )
       #puts first_subject
 
-      # search for all items with this subject
-      post search_endpoint, { :query => "subject:{\"#{first_subject}\"}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
-      expect_status( 200 )
+      if !first_subject.nil?
+        # search for all items with this subject
+        post search_endpoint, { :query => "subject:{\"#{first_subject}\"}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
+        expect_status( 200 )
 
-      expect( json_body[:group_list].count ).to be > 0
-      all_subjects = Helpers.pool_results_all_subjects( json_body )
-      #puts all_subjects
+        expect( json_body[:group_list].count ).to be > 0
+        all_subjects = Helpers.pool_results_all_subjects( json_body )
+        #puts all_subjects
 
-      expect(all_subjects).to include(first_subject)
+        expect(all_subjects).to include(first_subject)
+      end
   end
 
   #
