@@ -135,14 +135,13 @@ describe 'pool' do
   # test that a subject search returns items with the identical subject
   #
   it "#{url} should return exact subject match" do
-      post search_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
+      post search_endpoint, { :query => "subject:{*}", :pagination => { :start => 0, :rows => 1 } }
       expect_status( 200 )
 
       expect( json_body[:group_list].count ).to be > 0
 
       # extract the first subject from the results
       first_subject = Helpers.pool_results_first_subject( json_body )
-      #puts first_subject
 
       # search for all items with this subject
       post search_endpoint, { :query => "subject:{\"#{first_subject}\"}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
