@@ -11,10 +11,8 @@ describe 'pool' do
   search_endpoint = '/api/search'
   facet_endpoint = '/api/search/facets'
 
-  # define simple query
-  def query(key,val)
-    return { :query => "#{key}:{#{val}}", :pagination => { :start => 0, :rows => 1 }  }
-  end
+  # define all items query
+  all_items_query = "author:{jefferson}"
 
   # test one item is included
   def test_include(all,one)
@@ -32,7 +30,7 @@ describe 'pool' do
   # tests that the search call returns reported JSON
   #
   it "#{url} search should return json" do
-      post search_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 1 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
+      post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
       expect(headers[:content_type]).to eq('application/json; charset=utf-8')
@@ -43,7 +41,7 @@ describe 'pool' do
   # tests that the facet call returns reported JSON
   #
   it "#{url} search should return json" do
-      post facet_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 1 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
+      post facet_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
       expect(headers[:content_type]).to eq('application/json; charset=utf-8')
@@ -53,7 +51,7 @@ describe 'pool' do
   # tests that we have a reasonable structure in response to a search request
   #
   it "#{url} should return the correct search response structure" do
-      post search_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 1 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
+      post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
       expect_json_types( identity: :object)
@@ -71,7 +69,7 @@ describe 'pool' do
   # tests that we have a reasonable structure in response to a facet request
   #
   it "#{url} should return the correct facet response structure" do
-      post facet_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 1 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
+      post facet_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
       #expect_json_types( identity: :object)
@@ -121,7 +119,7 @@ describe 'pool' do
   # test that a multi-word known title search returns an item with that known title first
   #
   it "#{url} should return exact title match" do
-      post search_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
+      post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
       expect( json_body[:group_list].count ).to be > 0
@@ -145,7 +143,7 @@ describe 'pool' do
   # test that a subject search returns items with the identical subject
   #
   it "#{url} should return exact subject match" do
-      post search_endpoint, query("subject", "*")
+      post search_endpoint, { :query => "subject:{*}", :pagination => { :start => 0, :rows => 1 }}
       expect_status( 200 )
 
       expect( json_body[:group_list].count ).to be > 0
@@ -154,7 +152,6 @@ describe 'pool' do
       first_subject = Helpers.pool_results_first_subject( json_body )
 
       # search for all items with this subject
-      # puts query("subject", "\"#{first_subject}\"")
       post search_endpoint, { :query => "subject:{\"#{first_subject}\"}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
@@ -176,7 +173,7 @@ describe 'pool' do
   # test that a date range includes an expected item
   #
   it "#{url} support searching by date range" do
-    post search_endpoint,  query("author","jefferson")
+    post search_endpoint,   { :query => all_items_query, :pagination => { :start => 0, :rows => 1 }}
     expect_status( 200 )
 
     expect( json_body[:group_list].count ).to be > 0
@@ -220,7 +217,7 @@ describe 'pool' do
   #
 
   it "#{url} should return exact identifier match" do
-    post search_endpoint, query("keyword", "")
+    post search_endpoint, { :query => "keyword:{}", :pagination => { :start => 0, :rows => 1 }}
     expect_status( 200 )
 
     expect( json_body[:group_list].count ).to be > 0
@@ -229,7 +226,7 @@ describe 'pool' do
     first_identifier = Helpers.pool_results_first_identifier( json_body )
 
     # search for one item with this identifier
-    post search_endpoint, query("identifier","#{first_identifier}")
+    post search_endpoint, { :query => "identifier:{#{first_identifier}}", :pagination => { :start => 0, :rows => 1 }}
     expect_status( 200 )
 
     expect( json_body[:group_list].count ).to be > 0
