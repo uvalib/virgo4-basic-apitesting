@@ -11,6 +11,16 @@ describe 'pool' do
   search_endpoint = '/api/search'
   facet_endpoint = '/api/search/facets'
 
+  # define simple query
+  def query(key,val)
+    return { :query => "#{key}:{#{val}}", :pagination => { :start => 0, :rows => 1 }  }
+  end
+
+  # test one item is included
+  def test_include(all,one)
+    return expect(all).to include(one)
+  end
+
   url = ENV['URL']
 
   before do
@@ -128,14 +138,14 @@ describe 'pool' do
       all_titles = Helpers.pool_results_all_titles( json_body )
       #puts all_titles
 
-      expect(all_titles).to include(first_title)
+      test_include(all_titles,first_title)
   end
 
   #
   # test that a subject search returns items with the identical subject
   #
   it "#{url} should return exact subject match" do
-      post search_endpoint, { :query => "subject:{*}", :pagination => { :start => 0, :rows => 1 } }
+      post search_endpoint, query("subject", "*")
       expect_status( 200 )
 
       expect( json_body[:group_list].count ).to be > 0
@@ -144,14 +154,14 @@ describe 'pool' do
       first_subject = Helpers.pool_results_first_subject( json_body )
 
       # search for all items with this subject
+      # puts query("subject", "\"#{first_subject}\"")
       post search_endpoint, { :query => "subject:{\"#{first_subject}\"}", :pagination => { :start => 0, :rows => 25 }, :filters => nil, :preferences => { :target_pool => "", :exclude_pool => nil } }
       expect_status( 200 )
 
       expect( json_body[:group_list].count ).to be > 0
       all_subjects = Helpers.pool_results_all_subjects( json_body )
-      #puts all_subjects
 
-      expect(all_subjects).to include(first_subject)
+      test_include(all_subjects,first_subject)
   end
 
   #
@@ -165,8 +175,8 @@ describe 'pool' do
   #
   # test that a date range includes an expected item
   #
-  it "#{url} should return one or more items" do
-    post search_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 1 }  }
+  it "#{url} support searching by date range" do
+    post search_endpoint,  query("author","jefferson")
     expect_status( 200 )
 
     expect( json_body[:group_list].count ).to be > 0
@@ -175,7 +185,7 @@ describe 'pool' do
     first_pub_date = Helpers.pool_results_first_pub_date( json_body )
 
     # extract the first title from the results
-    first_title = Helpers.pool_results_first_title( json_body )
+    first_id = Helpers.pool_results_first_identifier( json_body )
 
     # search for one item within this date range
     # puts "date:{#{first_pub_date.to_i - 1} TO #{first_pub_date.to_i + 1}} AND author:{jefferson}"
@@ -183,26 +193,26 @@ describe 'pool' do
     expect_status( 200 )
 
     expect( json_body[:group_list].count ).to be > 0
-    all_titles = Helpers.pool_results_all_titles( json_body )
+    all_ids = Helpers.pool_results_all_identifiers( json_body )
 
-    expect(all_titles).to include(first_title)
+    test_include(all_ids, first_id)
 
     # no items should return out of the date range
     post search_endpoint, { :query => "date:{BEFORE #{first_pub_date.to_i - 1}} AND author:{jefferson}", :pagination => { :start => 0, :rows => 1 } }
     expect_status( 200 )
 
     expect( json_body[:group_list].count ).to be > 0
-    all_titles = Helpers.pool_results_all_titles( json_body )
+    all_ids = Helpers.pool_results_all_identifiers( json_body )
 
-    expect(all_titles).not_to include(first_title)
+    expect(all_ids).not_to include(first_id)
 
     post search_endpoint, { :query => "date:{AFTER #{first_pub_date.to_i + 1}} AND author:{jefferson}", :pagination => { :start => 0, :rows => 1 } }
     expect_status( 200 )
 
     expect( json_body[:group_list].count ).to be > 0
-    all_titles = Helpers.pool_results_all_titles( json_body )
+    all_ids = Helpers.pool_results_all_identifiers( json_body )
 
-    expect(all_titles).not_to include(first_title)
+    expect(all_ids).not_to include(first_id)
   end
 
   #
@@ -210,7 +220,7 @@ describe 'pool' do
   #
 
   it "#{url} should return exact identifier match" do
-    post search_endpoint, { :query => "keyword:{}", :pagination => { :start => 0, :rows => 1 }  }
+    post search_endpoint, query("keyword", "")
     expect_status( 200 )
 
     expect( json_body[:group_list].count ).to be > 0
@@ -219,13 +229,13 @@ describe 'pool' do
     first_identifier = Helpers.pool_results_first_identifier( json_body )
 
     # search for one item with this identifier
-    post search_endpoint, { :query => "identifier:{#{first_identifier}}", :pagination => { :start => 0, :rows => 1 } }
+    post search_endpoint, query("identifier","#{first_identifier}")
     expect_status( 200 )
 
     expect( json_body[:group_list].count ).to be > 0
     all_identifiers = Helpers.pool_results_first_identifier( json_body )
 
-    expect(all_identifiers).to include(first_identifier)
+    test_include(all_identifiers, first_identifier)
   end
 end
 
