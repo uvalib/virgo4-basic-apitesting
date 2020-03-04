@@ -165,7 +165,46 @@ describe 'pool' do
   #
   # test that a date range includes an expected item
   #
-  #
+  it "#{url} should return one or more items" do
+    post search_endpoint, { :query => "author:{jefferson}", :pagination => { :start => 0, :rows => 1 }  }
+    expect_status( 200 )
+
+    expect( json_body[:group_list].count ).to be > 0
+
+    # extract the first publication date from the results
+    first_pub_date = Helpers.pool_results_first_pub_date( json_body )
+
+    # extract the first title from the results
+    first_title = Helpers.pool_results_first_title( json_body )
+
+    # search for one item within this date range
+    # puts "date:{#{first_pub_date.to_i - 1} TO #{first_pub_date.to_i + 1}} AND author:{jefferson}"
+    post search_endpoint, { :query => "date:{#{first_pub_date.to_i - 1} TO #{first_pub_date.to_i + 1}} AND author:{jefferson}", :pagination => { :start => 0, :rows => 1 } }
+    expect_status( 200 )
+
+    expect( json_body[:group_list].count ).to be > 0
+    all_titles = Helpers.pool_results_all_titles( json_body )
+
+    expect(all_titles).to include(first_title)
+
+    # no items should return out of the date range
+    post search_endpoint, { :query => "date:{BEFORE #{first_pub_date.to_i - 1}} AND author:{jefferson}", :pagination => { :start => 0, :rows => 1 } }
+    expect_status( 200 )
+
+    expect( json_body[:group_list].count ).to be > 0
+    all_titles = Helpers.pool_results_all_titles( json_body )
+
+    expect(all_titles).not_to include(first_title)
+
+    post search_endpoint, { :query => "date:{AFTER #{first_pub_date.to_i + 1}} AND author:{jefferson}", :pagination => { :start => 0, :rows => 1 } }
+    expect_status( 200 )
+
+    expect( json_body[:group_list].count ).to be > 0
+    all_titles = Helpers.pool_results_all_titles( json_body )
+
+    expect(all_titles).not_to include(first_title)
+  end
+
   #
   # test an identifier search
   #
