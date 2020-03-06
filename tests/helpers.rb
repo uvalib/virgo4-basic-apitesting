@@ -19,6 +19,11 @@ class Helpers
     return identifiers[0]
   end
 
+  def self.pool_results_first_pub_date(pool_results)
+    pub_dates = self.pool_results_all_pub_dates( pool_results )
+    return pub_dates[0]
+  end
+
   def self.pool_results_all_titles( pool_results )
     self.pool_results_all_values( pool_results, 'title' )
   end
@@ -29,6 +34,10 @@ class Helpers
 
   def self.pool_results_all_identifiers(pool_results)
     self.pool_results_all_values( pool_results, 'id' )
+  end
+
+  def self.pool_results_all_pub_dates( pool_results )
+    self.pool_results_all_values( pool_results, 'publication_date' )
   end
 
   def self.pool_results_all_values( pool_results, field_name )
