@@ -9,6 +9,11 @@ class Helpers
     return titles[0]
   end
 
+  def self.pool_results_first_subtitle( pool_results )
+    subtitles = self.pool_results_all_subtitles( pool_results )
+    return subtitles[0]
+  end
+
   def self.pool_results_first_subject( pool_results )
     subjects = self.pool_results_all_subjects( pool_results )
     return subjects[0]
@@ -26,6 +31,10 @@ class Helpers
 
   def self.pool_results_all_titles( pool_results )
     self.pool_results_all_values( pool_results, 'title' )
+  end
+
+  def self.pool_results_all_subtitles( pool_results )
+    self.pool_results_all_values( pool_results, 'subtitle' )
   end
 
   def self.pool_results_all_subjects( pool_results )

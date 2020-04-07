@@ -1,6 +1,9 @@
 .PHONY: test
-all: test-pools test-master test-client
+all: functional-test test-pools test-master test-client
 test-pools: test-pool-catalog test-pool-jmrl test-pool-articles
+
+functional-test:
+	URL='https://pool-solr-ws-catalog.internal.lib.virginia.edu' rspec tests/functional-tests.rb
 
 test-pool-catalog:
 	URL='https://pool-solr-ws-catalog.internal.lib.virginia.edu' rspec tests/test-pool-search.rb
