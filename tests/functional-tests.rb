@@ -6,7 +6,7 @@ describe 'functions' do
   search_endpoint = '/api/search'
 
   #get authentication token
-  autotoken = `curl -X POST https://v4.lib.virginia.edu/authorize`
+  autotoken = `curl -X POST $AUTH_URL`
 
   # test one item is included
   def test_include(all,one)

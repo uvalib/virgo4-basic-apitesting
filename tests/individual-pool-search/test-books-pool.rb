@@ -13,7 +13,7 @@ describe 'books pool' do
   #identify_endpoint = '/api/identify'
 
   #get authentication token
-  autotoken = `curl -X POST https://v4.lib.virginia.edu/authorize`
+  autotoken = `curl -X POST $AUTH_URL`
 
   # define all items query
   all_items_query = "author:{jefferson}"
