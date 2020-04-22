@@ -12,7 +12,7 @@ describe 'pool' do
   #identify_endpoint = '/api/identify'
 
   #get authentication token
-  autotoken = `curl -X POST $AUTH_URL`
+  authtoken = RestClient.post ENV['AUTH_URL'], ""
 
   # define all items query
   all_items_query = "author:{jefferson}"
@@ -23,11 +23,10 @@ describe 'pool' do
   end
 
   url = ENV['URL']
-
   before do
     Airborne.configuration.base_url = url
     #Airborne.configuration.headers = { 'Content-Type' => 'application/json', 'Accept' => 'application/json', 'Authorization' => 'Bearer bkb4notbo1bc80d2uucg' }
-    Airborne.configuration.headers = { 'Content-Type' => 'application/json', 'Accept' => 'application/json', 'Authorization' => 'Bearer '+ autotoken }
+    Airborne.configuration.headers = { 'Content-Type' => 'application/json', 'Accept' => 'application/json', 'Authorization' => 'Bearer '+ authtoken }
     Airborne.configuration.verify_ssl = false
   end
   #
