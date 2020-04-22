@@ -6,8 +6,8 @@ describe 'functions' do
   search_endpoint = '/api/search'
 
   #get authentication token
-  autotoken = `curl -X POST $AUTH_URL`
-
+  authtoken = RestClient.post ENV['AUTH_URL'], ""
+  
   # test one item is included
   def test_include(all,one)
     return expect(all).to include(one)
@@ -17,7 +17,7 @@ describe 'functions' do
 
   before do
     Airborne.configuration.base_url = url
-    Airborne.configuration.headers = { 'Content-Type' => 'application/json', 'Accept' => 'application/json', 'Authorization' => 'Bearer '+ autotoken }
+    Airborne.configuration.headers = { 'Content-Type' => 'application/json', 'Accept' => 'application/json', 'Authorization' => 'Bearer '+ authtoken }
     Airborne.configuration.verify_ssl = false
   end
 
