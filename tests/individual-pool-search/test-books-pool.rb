@@ -13,7 +13,7 @@ describe 'books pool' do
   #identify_endpoint = '/api/identify'
 
   #get authentication token
-  autotoken = `curl -X POST https://v4.lib.virginia.edu/authorize`
+  authtoken = RestClient.post ENV['AUTH_URL'], ""
 
   # define all items query
   all_items_query = "author:{jefferson}"
@@ -27,7 +27,7 @@ describe 'books pool' do
 
   before do
     Airborne.configuration.base_url = url
-    Airborne.configuration.headers = { 'Content-Type' => 'application/json', 'Accept' => 'application/json', 'Authorization' => 'Bearer '+ autotoken }
+    Airborne.configuration.headers = { 'Content-Type' => 'application/json', 'Accept' => 'application/json', 'Authorization' => 'Bearer '+ authtoken }
     Airborne.configuration.verify_ssl = false
   end
 
