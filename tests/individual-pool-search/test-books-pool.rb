@@ -49,6 +49,30 @@ describe 'books pool' do
     expect(json_body[:pagination][:total]).to eq(numb_facetlibrary)
 
   end
+
+  #
+  # Test sort order
+  #
+
+  it "#{url} should return sort order match" do
+    post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 }}
+    expect_status( 200 )
+    expect(json_body[:sort][:sort_id]).not_to be_empty
+
+    post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 },:sort => { :sort_id => "SortDatePublished", :order => "asc"}}
+    expect(json_body[:sort][:sort_id]).to eq("SortDatePublished")
+    expect(json_body[:sort][:order]).to eq("asc")
+
+    post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 },:sort => { :sort_id => "SortDatePublished", :order => "desc"}}
+    expect(json_body[:sort][:sort_id]).to eq("SortDatePublished")
+    expect(json_body[:sort][:order]).to eq("desc")
+
+    post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 },:sort => { :sort_id => "SortRelevance", :order => "desc"}}
+    expect(json_body[:sort][:sort_id]).to eq("SortRelevance")
+    expect(json_body[:sort][:order]).to eq("desc")
+  end
+
+
 end
 
 #

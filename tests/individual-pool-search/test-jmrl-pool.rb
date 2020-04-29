@@ -30,6 +30,11 @@ describe 'JMRL pool' do
     Airborne.configuration.verify_ssl = false
   end
 
+  it "#{url} should return sort order match" do
+    post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 }}
+    expect_status( 200 )
+    expect(json_body[:sort][:sort_id]).to be_empty
+  end
 
 end
 #
