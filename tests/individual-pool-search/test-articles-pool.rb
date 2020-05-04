@@ -57,10 +57,6 @@ describe 'articles pool' do
   #
 
   it "#{url} should return sort order match" do
-    post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 }}
-    expect_status( 200 )
-    expect(json_body[:sort][:sort_id]).not_to be_empty
-
     post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 },:sort => { :sort_id => "SortDate", :order => "asc"}}
     expect(json_body[:sort][:sort_id]).to eq("SortDate")
     expect(json_body[:sort][:order]).to eq("asc")

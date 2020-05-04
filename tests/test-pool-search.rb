@@ -9,7 +9,7 @@ describe 'pool' do
   # define the endpoints
   search_endpoint = '/api/search'
   facet_endpoint = '/api/search/facets'
-  #identify_endpoint = '/api/identify'
+  identify_endpoint = '/identify'
 
   #get authentication token
   authtoken = RestClient.post ENV['AUTH_URL'], ""
@@ -224,6 +224,15 @@ describe 'pool' do
     all_identifiers = Helpers.pool_results_first_identifier( json_body )
 
     test_include(all_identifiers, first_identifier)
+  end
+
+  it "#{url} should return sort order availability" do
+    get identify_endpoint
+    expect_status( 200 )
+
+    sorting_status = Helpers.get_sorting_status(json_body)
+    expect(sorting_status).to eq(true)
+
   end
 
 end

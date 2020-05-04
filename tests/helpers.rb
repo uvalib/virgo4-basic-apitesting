@@ -64,6 +64,14 @@ class Helpers
     all_values
   end
 
+  def self.get_sorting_status ( pool_results )
+    status = ""
+    pool_results[:attributes].each do | attribute |
+        if attribute[:name] == "sorting" then status = attribute[:supported] end
+    end
+    return status
+  end
+
 end
 
 #
