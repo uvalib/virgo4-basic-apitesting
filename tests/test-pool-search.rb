@@ -231,7 +231,50 @@ describe 'pool' do
     expect_status( 200 )
 
     sorting_status = Helpers.get_sorting_status(json_body)
-    expect(sorting_status).to eq(true)
+    if sorting_status == false
+      puts "This pool doesn't support sorting"
+    else
+      if json_body[:name] == ("Books" || "Images")
+        post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 },:sort => { :sort_id => "SortDatePublished", :order => "asc"}}
+        expect(json_body[:sort][:sort_id]).to eq("SortDatePublished")
+        expect(json_body[:sort][:order]).to eq("asc")
+
+        post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 },:sort => { :sort_id => "SortDatePublished", :order => "desc"}}
+        expect(json_body[:sort][:sort_id]).to eq("SortDatePublished")
+        expect(json_body[:sort][:order]).to eq("desc")
+
+        post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 },:sort => { :sort_id => "SortRelevance", :order => "desc"}}
+        expect(json_body[:sort][:sort_id]).to eq("SortRelevance")
+        expect(json_body[:sort][:order]).to eq("desc")
+
+        post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 },:sort => { :sort_id => "SortCallNumber", :order => "asc"}}
+        expect(json_body[:sort][:sort_id]).to eq("SortCallNumber")
+        expect(json_body[:sort][:order]).to eq("asc")
+
+        post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 },:sort => { :sort_id => "SortCallNumber", :order => "desc"}}
+        expect(json_body[:sort][:sort_id]).to eq("SortCallNumber")
+        expect(json_body[:sort][:order]).to eq("desc")
+
+        post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 },:sort => { :sort_id => "SortAuthor", :order => "asc"}}
+        expect_status(400)
+      end
+      if json_body[:name] == "Articles"
+        post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 },:sort => { :sort_id => "SortRelevance", :order => "desc"}}
+        expect(json_body[:sort][:sort_id]).to eq("SortRelevance")
+        expect(json_body[:sort][:order]).to eq("desc")
+
+        post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 },:sort => { :sort_id => "SortDate", :order => "asc"}}
+        expect(json_body[:sort][:sort_id]).to eq("SortDate")
+        expect(json_body[:sort][:order]).to eq("asc")
+
+        post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 },:sort => { :sort_id => "SortDate", :order => "desc"}}
+        expect(json_body[:sort][:sort_id]).to eq("SortDate")
+        expect(json_body[:sort][:order]).to eq("desc")
+
+        post search_endpoint, { :query => all_items_query, :pagination => { :start => 0, :rows => 1 },:sort => { :sort_id => "SortAuthor", :order => "asc"}}
+        expect_status(200)
+      end
+    end
 
   end
 
