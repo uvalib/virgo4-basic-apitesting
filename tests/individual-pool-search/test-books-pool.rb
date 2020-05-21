@@ -40,7 +40,7 @@ describe 'books pool' do
     expect_status( 200 )
 
     # json_body[:facet_list][3][:buckets][0] returns FacetLibrary against book pool
-    numb_facetlibrary = json_body[:facet_list][3][:buckets][0][:count]
+    numb_facetlibrary = json_body[:facet_list][4][:buckets][0][:count]
 
     # search for facet Library
     post search_endpoint, {:query => all_items_query ,:pagination => { :start => 0, :rows => 1 },:filters => [{:pool_id => "books",:facets => [{:facet_id => "FacetLibrary", :facet_name => "Library",:value => "Alderman"}]}]}
@@ -49,6 +49,7 @@ describe 'books pool' do
     expect(json_body[:pagination][:total]).to eq(numb_facetlibrary)
 
   end
+
 end
 
 #

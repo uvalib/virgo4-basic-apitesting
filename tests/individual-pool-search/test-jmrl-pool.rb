@@ -30,7 +30,6 @@ describe 'JMRL pool' do
     Airborne.configuration.verify_ssl = false
   end
 
-
 end
 #
 # end of file

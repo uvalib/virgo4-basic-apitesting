@@ -49,6 +49,7 @@ describe 'articles pool' do
     expect(json_body[:pagination][:total]).to eq(numb_facetLanguage)
 
   end
+
 end
 
 #
