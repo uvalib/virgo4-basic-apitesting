@@ -226,6 +226,15 @@ describe 'pool' do
     test_include(all_identifiers, first_identifier)
   end
 
+  it "#{url} should return at least one result for a * search" do
+    post search_endpoint, { :query => "keyword:{*}", :pagination => { :start => 0, :rows => 1 }}
+    expect_status( 200 )
+    expect( json_body[:group_list].count ).to be > 0
+    expect(Helpers.pool_results_first_title( json_body )).not_to be nil?
+
+
+  end
+
 end
 
 #
