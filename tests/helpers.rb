@@ -30,7 +30,7 @@ class Helpers
   end
 
   def self.pool_results_all_titles( pool_results )
-    self.pool_results_all_values( pool_results, 'title' )
+    self.pool_results_all_values( pool_results, 'title_subtitle_edition' )
   end
 
   def self.pool_results_all_subtitles( pool_results )

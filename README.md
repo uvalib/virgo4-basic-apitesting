@@ -6,6 +6,8 @@
     
     Functional test: `URL=$FUNCTIONAL_TEST_URL make functional-test`
     
+    Functional test for checking pools only: `rspec tests/functional-tests.rb`
+    
     Catalog pool test: `URL=$CATALOG_POOL_URL make test-pool-catalog`
     
     JMRL pool test: `URL=$JMRL_POOL_URL make test-pool-jmrl`
